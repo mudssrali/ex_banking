@@ -9,7 +9,9 @@ defmodule ExBanking.Application do
     # List all child processes to be supervised
     children = [
       {Registry, keys: :unique, name: ExBanking.AccountsRegistry},
-      {DynamicSupervisor, strategy: :one_for_one, name: ExBanking.AccountsSupervisor}
+      {DynamicSupervisor, strategy: :one_for_one, name: ExBanking.AccountsSupervisor},
+      # Start RateLimiter
+      ExBanking.RateLimiter
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
