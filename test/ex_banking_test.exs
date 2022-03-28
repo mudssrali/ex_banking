@@ -98,4 +98,42 @@ defmodule ExBankingTest do
     ExBanking.create_user(sender)
     assert ExBanking.send(sender, receiver, 10.00, "Euro") == {:error, :receiver_does_not_exist}
   end
+
+  test "Deposit multiple amounts into existing under limit" do
+    user = "Arslan"
+    ExBanking.create_user(user)
+
+    assert Enum.all?(1..15, fn x ->
+             {:ok, _balance} = ExBanking.deposit(user, x, "USD")
+           end)
+  end
+
+  test "Deposit multiple amounts when request limit reached" do
+    user = "Keno"
+    ExBanking.create_user(user)
+
+    assert Enum.any?(1..30, fn x ->
+             ExBanking.deposit(user, x, "USD") == {:error, :too_many_requests_to_user}
+           end)
+  end
+
+  test "Withdraw multiple amounts when request limit reached" do
+    user = "Keno"
+    ExBanking.create_user(user)
+    ExBanking.deposit(user, 25, "USD")
+
+    assert Enum.any?(1..30, fn x ->
+             ExBanking.withdraw(user, x, "USD") == {:error, :too_many_requests_to_user}
+           end)
+  end
+
+  test "Withdraw multiple amounts when no money available" do
+    user = "Kati"
+    ExBanking.create_user(user)
+    ExBanking.deposit(user, 25, "USD")
+
+    assert Enum.any?(1..30, fn x ->
+             ExBanking.withdraw(user, x, "USD") == {:error, :not_enough_money}
+           end)
+  end
 end
