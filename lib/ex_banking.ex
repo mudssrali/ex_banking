@@ -170,6 +170,10 @@ defmodule ExBanking do
   def send(from_user, to_user, amount, currency)
       when is_binary(from_user) and is_binary(to_user) and is_number(amount) and amount >= 0 and
              is_binary(currency) do
+    # TODO: Here we need to handle a case in which we need to make sure
+    # when a withdraw happens for sender, and receiver is unable to accept
+    # more requests in the given time.
+
     with(
       {:ok, _from_user_account} <- validate_user(from_user, :sender),
       {:ok, _to_user_account} <- validate_user(to_user, :receiver),
