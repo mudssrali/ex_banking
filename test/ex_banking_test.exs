@@ -103,7 +103,7 @@ defmodule ExBankingTest do
     user = "Arslan"
     ExBanking.create_user(user)
 
-    assert Enum.all?(1..15, fn x ->
+    assert Enum.all?(1..10, fn x ->
              {:ok, _balance} = ExBanking.deposit(user, x, "USD")
            end)
   end
